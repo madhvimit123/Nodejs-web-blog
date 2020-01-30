@@ -46,6 +46,18 @@ app.get('/users/:id',async (req,res)=>{
 
 })
 
+app.patch('/users/:id',async(req,res)=>{
+    try{
+        const user= await User.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
+        if(!user){
+            return res.status(404).send('User does not exist')
+        }
+        res.status(200).send(user)
+    }catch(e){
+        res.status(500).send()
+    }
+})
+
 app.delete('/users/:id',async (req,res)=>{
     const _id=req.params.id
     try{
@@ -92,6 +104,18 @@ app.get('/blogs/:id',async (req,res)=>{
     
 })
 
+app.patch('/blogs/:id',async (req,res)=>{
+    try{
+        const blog = await Blog.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
+        if(!blog){
+            return res.status(404).send('Blog does not exist!')
+        } 
+        res.status(500).send(blog)
+    }catch(e){
+        res.status(500).send()
+    }
+})
+
 app.delete('/blogs/:id',async (req,res)=>{
     const _id = req.params.id
     try{
@@ -104,6 +128,8 @@ app.delete('/blogs/:id',async (req,res)=>{
         res.status(500).send()
     }
 })
+
+
 
 app.listen(port,()=>{
     console.log('Server up at port',port)
