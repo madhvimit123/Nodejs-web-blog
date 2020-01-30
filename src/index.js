@@ -10,65 +10,99 @@ const port=process.env.PORT||3000
 app.use(express.json())
 
 
-app.post('/users',(req,res)=>{
+app.post('/users',async (req,res)=>{
     const user= new User(req.body)
-    user.save().then(()=>{
-        res.status(201).send(user)
-    }).catch((e)=>{
+    try{
+    await user.save()
+    status(201).send(user)
+    }
+    catch(e){
         res.status(400).send(e)
-    })
+    }
 })
 
-app.get('/users',(req,res)=>{
-    User.find({}).then((users)=>{
+app.get('/users',async (req,res)=>{
+    try{
+        const users= await User.find({})
         res.status(200).send(users)
-    }).catch((e)=>{
+    }catch(e){
         res.status(500).send()
-    })
+    }
+
     
 })
 
-app.get('/users/:id',(req,res)=>{
+app.get('/users/:id',async (req,res)=>{
     const _id=req.params.id
-
-    User.findById(_id).then((user)=>{
-      if(!user){
-          return res.status(404).send('Unable to find the user!')
-      }
-      res.status(200).send(user)
-    }).catch((e)=>{
+    try{
+        const user=await User.findById(_id)
+        if(!user){
+            return res.status(404).send('Unable to find the user!')
+        }
+        res.status(200).send(user)
+    }catch(e){
         res.status(500).send()
-    })
+    }
+
 })
 
-app.post('/blogs',(req,res)=>{
+app.delete('/users/:id',async (req,res)=>{
+    const _id=req.params.id
+    try{
+        const user= await User.findByIdAndDelete({_id})
+        if(!user){
+            return res.status(400).send('User does not exist!')
+        }
+        res.status(200).send()
+    }catch(e){
+        res.status(500).send()
+    }
+})
+
+app.post('/blogs',async (req,res)=>{
     const blog= new Blog(req.body)
-    blog.save().then(()=>{
+    try{
+        await blog.save()
         res.status(201).send(blog)
-    }).catch((e)=>{
+    }catch(e){
         res.status(400).send(e)
-    })
+    }
 })
 
-app.get('/blogs',(req,res)=>{
-    Blog.find({}).then((blogs)=>{
+app.get('/blogs',async (req,res)=>{
+    try{
+        const blogs=await Blog.find({})
         res.status(200).send(blogs)
-    }).catch((e)=>{
+    }catch(e){
         res.status(500).send()
-    })
+    }
 })
 
-app.get('/blogs/:id',(req,res)=>{
+app.get('/blogs/:id',async (req,res)=>{
     const _id=req.params.id
-
-    Blog.findById(_id).then((blog)=>{
+    try{
+        const blog=await Blog.findById(_id)
         if(!blog){
             return res.status(404).send('No blog exists!')
         }
         res.status(200).send(blog)
-    }).catch((e)=>{
+    }catch(e){
         res.status(500).send()
-    })
+    }
+    
+})
+
+app.delete('/blogs/:id',async (req,res)=>{
+    const _id = req.params.id
+    try{
+        const blog= await Blog.findByIdAndDelete({_id})
+        if(!blog){
+            return res.status(404).send('Blog does not exist!')
+        }
+        res.status(200).send()
+    }catch(e){
+        res.status(500).send()
+    }
 })
 
 app.listen(port,()=>{
