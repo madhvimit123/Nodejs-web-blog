@@ -45,7 +45,10 @@ router.patch('/blogs/:id',async (req,res)=>{
     }
 
     try{
-        const blog = await Blog.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
+        const blog= await Blog.findById(req.params.id)
+        updates.forEach((update)=>blog[update]=req.body[update])
+        await blog.save()
+        //const blog = await Blog.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
         if(!blog){
             return res.status(404).send('Blog does not exist!')
         } 
