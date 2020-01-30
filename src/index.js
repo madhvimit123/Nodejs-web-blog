@@ -28,6 +28,18 @@ app.get('/users',(req,res)=>{
     
 })
 
+app.get('/users/:id',(req,res)=>{
+    const _id=req.params.id
+
+    User.findById(_id).then((user)=>{
+      if(!user){
+          return res.status(404).send('Unable to find the user!')
+      }
+      res.status(200).send(user)
+    }).catch((e)=>{
+        res.status(500).send()
+    })
+})
 
 app.post('/blogs',(req,res)=>{
     const blog= new Blog(req.body)
@@ -41,6 +53,19 @@ app.post('/blogs',(req,res)=>{
 app.get('/blogs',(req,res)=>{
     Blog.find({}).then((blogs)=>{
         res.status(200).send(blogs)
+    }).catch((e)=>{
+        res.status(500).send()
+    })
+})
+
+app.get('/blogs/:id',(req,res)=>{
+    const _id=req.params.id
+
+    Blog.findById(_id).then((blog)=>{
+        if(!blog){
+            return res.status(404).send('No blog exists!')
+        }
+        res.status(200).send(blog)
     }).catch((e)=>{
         res.status(500).send()
     })
