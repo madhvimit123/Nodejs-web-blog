@@ -47,6 +47,13 @@ app.get('/users/:id',async (req,res)=>{
 })
 
 app.patch('/users/:id',async(req,res)=>{
+    const updates= Object.keys(req.body)
+    const allowedUpdates=['name','email','password']
+    const isValidOperation= updates.every((update)=>allowedUpdates.includes(update))
+    if(!isValidOperation){
+        return res.status(400).send({error:'Invalid updates!'})
+    }
+
     try{
         const user= await User.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
         if(!user){
@@ -105,6 +112,13 @@ app.get('/blogs/:id',async (req,res)=>{
 })
 
 app.patch('/blogs/:id',async (req,res)=>{
+    const updates= Object.keys(req.body)
+    const allowedUpdates=['title','description']
+    const isValidOperation= updates.every((update)=>allowedUpdates.includes(update))
+    if(!isValidOperation){
+        return res.status(400).send({error:'Invalid updates!'})
+    }
+
     try{
         const blog = await Blog.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
         if(!blog){
