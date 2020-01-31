@@ -1,6 +1,8 @@
 const mongoose= require('mongoose')
 const validator = require('validator')
 
+//Blog Schema
+
 const blogSchema=new mongoose.Schema({
     title:{
         type:String,

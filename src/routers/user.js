@@ -3,7 +3,7 @@ const User=require('../models/user')
 const auth=require('../middleware/auth')
 const router = new express.Router()
 
-
+// Router to create user
 router.post('/users',async (req,res)=>{
     const user= new User(req.body)
     try{
@@ -16,6 +16,7 @@ router.post('/users',async (req,res)=>{
     }
 })
 
+//Router for login
 router.post('/users/login',async(req,res)=>{
     try{
         const user= await User.findByCredentials(req.body.email,req.body.password)
@@ -26,6 +27,8 @@ router.post('/users/login',async(req,res)=>{
         res.status(400).send()
     }
 })
+
+// Router for logout
 router.post('/users/logout',auth,async(req,res)=>{
     try{
         req.user.tokens = req.user.tokens.filter((token)=>{
@@ -37,6 +40,8 @@ router.post('/users/logout',auth,async(req,res)=>{
         req.status(500).send()
     }
 })
+
+//Router for ending all the sessions
 router.post('/users/logoutAll',auth,async(req,res)=>{
     try{
         req.user.tokens = []
@@ -47,6 +52,7 @@ router.post('/users/logoutAll',auth,async(req,res)=>{
     }
 })
 
+// Router to see the details of the logged in user profile 
 router.get('/users/me',auth,async (req,res)=>{
     try{
     res.send(req.user)
@@ -55,7 +61,7 @@ router.get('/users/me',auth,async (req,res)=>{
     }
 })
 
-
+//Router to update the details of the logged in user
 router.patch('/users/me',auth,async(req,res)=>{
     const updates= Object.keys(req.body)
     const allowedUpdates=['name','email','password']
@@ -73,6 +79,7 @@ router.patch('/users/me',auth,async(req,res)=>{
     }
 })
 
+//Router to delete the user
 router.delete('/users/me',auth,async (req,res)=>{
     const _id=req.user.id
     try{

@@ -4,6 +4,7 @@ const bcrypt=require('bcryptjs')
 const jwt= require('jsonwebtoken')
 const Blog = require('./blog')
 
+//User Schema
 const userSchema= new mongoose.Schema({
     name:{
         type:String,
@@ -45,11 +46,14 @@ const userSchema= new mongoose.Schema({
     timestamps:true
 })
 
+// Function to connect to the user's blog
 userSchema.virtual('blogs',{
     ref: 'Blog',
     localField: '_id',
     foreignField: 'owner'
 })
+
+// Function to generate token
 
 userSchema.methods.generateAuthToken= async function(){
     const user=this
@@ -59,6 +63,7 @@ userSchema.methods.generateAuthToken= async function(){
     return token
 }
 
+// Function to hide private data like passwords and tokens
 userSchema.methods.toJSON=function(){
     const user=this
     const userObject = user.toObject()
@@ -69,6 +74,7 @@ userSchema.methods.toJSON=function(){
 }
 
 
+// Function to check the credentials of logging in user exist or not in database
 
 userSchema.statics.findByCredentials = async (email,password)=>{
     const user = await User.findOne({email})
@@ -82,6 +88,7 @@ userSchema.statics.findByCredentials = async (email,password)=>{
     return user
 }
 
+// Function to encode password before saving in database
 
 userSchema.pre('save',async function(next){
     const user=this
@@ -90,6 +97,8 @@ userSchema.pre('save',async function(next){
     }
     next()
 })
+
+//Function to remove all the blogs of the user who is deleting his account
 
 userSchema.pre('remove',async function(next){
     const user = this

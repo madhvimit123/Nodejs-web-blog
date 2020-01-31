@@ -3,14 +3,13 @@ const Blog=require('../models/blog')
 const auth= require('../middleware/auth')
 const router = new express.Router()
 
-
+// Router for creating a blog
 router.post('/blogs',auth,async (req,res)=>{
    
     const blog =  new Blog({
         ...req.body,
         owner: req.user._id
     })
-  //  const count=Blog.countDocuments({owner:req.user._id})
     const count= await Blog.find({owner:req.user._id}).count()
     
     try{
@@ -27,6 +26,7 @@ router.post('/blogs',auth,async (req,res)=>{
     }
 })
 
+// Router to the logged in user's blog
 router.get('/blogs',auth,async (req,res)=>{
     try{
         await req.user.populate('blogs').execPopulate()
@@ -36,6 +36,7 @@ router.get('/blogs',auth,async (req,res)=>{
     }
 })
 
+// Router to view all the public blogs 
 router.get('/blogs/allBlogs',auth,async (req,res)=>{
     try{
         const allblogs= await Blog.find({$or:[{property:0},{owner:req.user._id}]})
@@ -49,6 +50,7 @@ router.get('/blogs/allBlogs',auth,async (req,res)=>{
     }
 })
 
+// Router to view a specific blog by entering the _id of the logged in user
 router.get('/blogs/:id',auth,async (req,res)=>{
     const _id=req.params.id
     try{
@@ -63,6 +65,7 @@ router.get('/blogs/:id',auth,async (req,res)=>{
     
 })
 
+//Router to update a specific blog of logged in user. Selecting a blog on the basis of id
 router.patch('/blogs/:id',auth,async (req,res)=>{
     const updates= Object.keys(req.body)
     const allowedUpdates=['title','description']
@@ -75,7 +78,6 @@ router.patch('/blogs/:id',auth,async (req,res)=>{
         const blog= await Blog.findOne({_id:req.params.id,owner:req.user._id})
       
         
-        //const blog = await Blog.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
         if(!blog){
             return res.status(404).send('Blog does not exist!')
         } 
@@ -88,6 +90,7 @@ router.patch('/blogs/:id',auth,async (req,res)=>{
     }
 })
 
+// Router to delete a blog of the logged in user
 router.delete('/blogs/:id',auth,async (req,res)=>{
     const _id = req.params.id
     try{
