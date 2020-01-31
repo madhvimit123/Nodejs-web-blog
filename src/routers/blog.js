@@ -36,6 +36,19 @@ router.get('/blogs',auth,async (req,res)=>{
     }
 })
 
+router.get('/blogs/allBlogs',auth,async (req,res)=>{
+    try{
+        const allblogs= await Blog.find({$or:[{property:0},{owner:req.user._id}]})
+        if(!allblogs){
+            return res.send('No blogs')
+        }
+        res.status(200).send(allblogs)
+        console.log(allblogs)
+    }catch(e){
+        res.status(400).send()
+    }
+})
+
 router.get('/blogs/:id',auth,async (req,res)=>{
     const _id=req.params.id
     try{

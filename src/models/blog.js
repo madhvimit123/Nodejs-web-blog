@@ -16,6 +16,10 @@ const blogSchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
+    },
+    property:{
+        type: Number,
+        required: true  //0 for public and 1 for private
     }
 },{
     timestamps:true
