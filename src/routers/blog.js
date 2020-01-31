@@ -10,9 +10,18 @@ router.post('/blogs',auth,async (req,res)=>{
         ...req.body,
         owner: req.user._id
     })
+  //  const count=Blog.countDocuments({owner:req.user._id})
+    const count= await Blog.find({owner:req.user._id}).count()
+    
     try{
-        await blog.save()
-        res.status(201).send(blog)
+        if(count<=4){
+            await blog.save()
+            res.status(201).send(blog)
+        }
+        else if(count==5){
+            return res.send('Limit exceeded!')
+        }
+        
     }catch(e){
         res.status(400).send(e)
     }
